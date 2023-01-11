@@ -1,4 +1,5 @@
 import axios from "axios";
+import { ElMessage } from "element-plus";
 
 console.log("axios base url", import.meta.env.VITE_BASE_URL);
 // console.log("axios base url", process.env.VUE_APP_BASE_URL);
@@ -22,6 +23,31 @@ instance.interceptors.request.use(
   },
   function (error: any) {
     // Do something with request error
+    return Promise.reject(error);
+  }
+);
+
+instance.interceptors.response.use(
+  function (response) {
+    // Any status code that lie within the range of 2xx cause this function to trigger
+    // Do something with response data
+    console.log("响应拦截", response);
+
+    // 如果身份校验失败，返回登录页
+    // response.data.code === 111 && (window.location.href = response.data);
+
+    const { code, msg, plainMsg } = response.data;
+
+    if (code !== 0) {
+      ElMessage.error(`${msg}: ${plainMsg}`);
+    }
+
+    return response.data; // 过滤掉除data参数外的其它参数，响应接收到的值。
+    // return response;
+  },
+  function (error) {
+    // Any status codes that falls outside the range of 2xx cause this function to trigger
+    // Do something with response error
     return Promise.reject(error);
   }
 );

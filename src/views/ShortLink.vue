@@ -7,7 +7,8 @@
           v-model.trim="queryText"
           placeholder="请输入查询关键字"
           style="width: 200px"
-          @input="queryChange"
+          clearable
+          @input="queryChangeDebounce"
         ></el-input>
       </div>
       <div>
@@ -33,6 +34,17 @@
         </template>
       </el-table-column>
     </el-table>
+    <div class="pagination-wrap">
+      <el-pagination
+        v-model:currentPage="currentPage"
+        v-model:page-size="pageSize"
+        :page-sizes="[20, 50, 100]"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="tableData.total"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
+    </div>
 
     <el-dialog
       v-if="showEditDialog"
@@ -63,16 +75,19 @@ import { ref, reactive, onBeforeMount } from "vue";
 import type { FormRules } from "element-plus";
 import axios from "@/utils/axios";
 import { ElMessage, ElMessageBox } from "element-plus";
+import { debounce } from "lodash-es";
+import { usePagination } from "@/composition/usePagination";
 
 const queryText = ref("");
-const tableData: any = {
-  list: [],
-  total: 0,
-};
 const queryChange = () => {
   // queryText.value
   console.log("queryChange", queryText.value);
+  resetPage();
+  getList();
 };
+
+const queryChangeDebounce = debounce(queryChange, 300);
+
 const addShortLink = () => {
   console.log("addShortLink");
   showEditDialog.value = true;
@@ -85,11 +100,15 @@ const getList = async () => {
     loading.value = true;
     // await new Promise((resolve) => setTimeout(resolve, 2000)); // sleep, test loading
     const res = await axios.get("/shortLink/list", {
-      params: { queryText: queryText.value },
+      params: {
+        queryText: queryText.value,
+        currentPage: currentPage.value,
+        pageSize: pageSize.value,
+      },
     });
     console.log(res);
-    tableData.total = res.data?.data?.total || 0;
-    tableData.list = res.data?.data?.list || [];
+    tableData.total = res.data?.total || 0;
+    tableData.list = res.data?.list || [];
 
     tableData.list = tableData.list.map((item: any) => {
       return item; // TODO: 处理数据
@@ -185,6 +204,18 @@ const deleteShortLink = async (index: any) => {
     console.log(e);
   }
 };
+
+const {
+  currentPage,
+  pageSize,
+  tableData,
+  handleSizeChange,
+  handleCurrentChange,
+  resetPage,
+} = usePagination({
+  sizeChange: () => getList(),
+  currentChange: () => getList(),
+});
 </script>
 
 <style lang="scss" scoped>
@@ -192,5 +223,10 @@ const deleteShortLink = async (index: any) => {
   display: flex;
   justify-content: space-between;
   margin-bottom: 15px;
+}
+.pagination-wrap {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 20px;
 }
 </style>
