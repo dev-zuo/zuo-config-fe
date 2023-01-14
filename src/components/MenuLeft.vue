@@ -25,6 +25,10 @@ const handleSelect = (index: string) => {
 </script>
 
 <style scoped>
-.menu-left {
+.el-menu {
+  border-right: none;
+}
+:deep(.el-menu-item).is-active {
+  color: #2d4fea;
 }
 </style>

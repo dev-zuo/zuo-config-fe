@@ -6,6 +6,9 @@ import MenuLeft from "./components/MenuLeft.vue";
 <template>
   <header class="home-header">
     <h1>zuo-config 配置中心</h1>
+    <a href="https://github.com/zuoxiaobai/zuo-config-fe" target="_blank">
+      Github
+    </a>
   </header>
   <main class="home-main">
     <nav class="home-main-left">
@@ -21,11 +24,13 @@ import MenuLeft from "./components/MenuLeft.vue";
 
 <style lang="scss" scoped>
 $header-height: 60px;
+$left-menu-width: 200px;
 .home-header {
   height: $header-height;
   box-shadow: 0 0 8px #ddd;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 20px;
   box-sizing: border-box;
   h1 {
@@ -38,13 +43,14 @@ $header-height: 60px;
   height: calc(100vh - $header-height);
   min-height: 800px;
   .home-main-left {
-    flex-basis: 240px;
+    flex-basis: $left-menu-width;
     flex-shrink: 0;
     box-shadow: 0 0 5px #eee;
   }
   .home-main-right {
-    flex-grow: 1;
+    width: calc(100% - $left-menu-width);
     padding: 20px;
+    box-sizing: border-box;
   }
 }
 </style>

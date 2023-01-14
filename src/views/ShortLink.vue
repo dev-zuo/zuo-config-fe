@@ -192,7 +192,7 @@ const deleteShortLink = async (index: any) => {
     try {
       // await new Promise((resolve) => setTimeout(resolve, 2000)); // sleep, test loading
       const res = await axios.post("/shortLink/del", {
-        id: tableData.list[index]?._id,
+        _id: tableData.list[index]?._id,
       });
       console.log(res);
       ElMessage.success("删除成功！");
