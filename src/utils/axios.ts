@@ -1,12 +1,17 @@
 import axios from "axios";
 import { ElMessage } from "element-plus";
+import router from "@/router";
+// import { useGlobalStore } from "@/stores/global";
+
+const NOT_LOGIN_CODE = -1;
+// const { accountInfo } = useGlobalStore();
 
 console.log("axios base url", import.meta.env.VITE_BASE_URL);
 // console.log("axios base url", process.env.VUE_APP_BASE_URL);
 const instance = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
   timeout: 60000,
-  headers: { "X-Custom-Header": "foobar" },
+  // headers: { token: accountInfo.token },
 });
 
 // axios.interceptors.request.use(resolve func, reject func)
@@ -19,6 +24,11 @@ instance.interceptors.request.use(
     // 为所有请求加一个时间戳参数
     config.url += (config?.url?.includes("?") ? "&" : "?") + "t=" + +new Date();
 
+    // config.headers = { token: accountInfo.token };
+    // 防止刷新后，状态管理数据清空，导致找不到 token
+    config.headers = {
+      token: localStorage.getItem("config-fe-token"),
+    };
     return config; // 用来请求的参数
   },
   function (error: any) {
@@ -39,7 +49,11 @@ instance.interceptors.response.use(
     const { code, msg, plainMsg } = response.data;
 
     if (code !== 0) {
-      ElMessage.error(`${msg}: ${plainMsg}`);
+      ElMessage.error(plainMsg ? `${msg}: ${plainMsg}` : msg);
+      // 如果是没有登录，跳转到登录页面
+      if (code === NOT_LOGIN_CODE) {
+        router.push("/login");
+      }
     }
 
     return response.data; // 过滤掉除data参数外的其它参数，响应接收到的值。
