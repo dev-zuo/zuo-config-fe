@@ -22,7 +22,8 @@
       v-loading="loading"
     >
       <el-table-column prop="shortLink" label="短链接路径" />
-      <el-table-column prop="redirect" label="重定向 URL" />\
+      <el-table-column prop="redirect" label="重定向 URL" />
+      <el-table-column prop="createDate" label="创建时间" />\
       <el-table-column label="操作">
         <template #default="scope">
           <el-button type="primary" text @click="editShortLink(scope.$index)">

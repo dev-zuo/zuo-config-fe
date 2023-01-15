@@ -18,6 +18,12 @@ const router = createRouter({
       name: "apiMock",
       component: () => import("@/views/ApiMock.vue"),
     },
+    {
+      path: "/login",
+      name: "Login",
+      component: () => import("@/views/Login.vue"),
+      meta: { requiresAuth: false, hideLeftMenu: true },
+    },
   ],
 });
 
