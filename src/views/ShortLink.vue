@@ -1,5 +1,12 @@
 <template>
   <div class="short-link">
+    <div class="tips">
+      配置成功后，可以通过 GET 请求
+      {{ apiUrl }} 接口获取配置数据。具体应用参考：
+      <a href="https://github.com/zuoxiaobai/s.zuo11.com" target="_blank">
+        s.zuo11.com 短链接服务
+      </a>
+    </div>
     <div class="sl-top">
       <div>
         <span>路径查询：</span>
@@ -72,13 +79,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onBeforeMount } from "vue";
+import { ref, reactive, onBeforeMount, computed } from "vue";
 import type { FormRules } from "element-plus";
 import axios from "@/utils/axios";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { debounce } from "lodash-es";
 import { usePagination } from "@/composition/usePagination";
+import { useGlobalStore } from "@/stores/global";
 
+const { accountInfo } = useGlobalStore();
 const queryText = ref("");
 const queryChange = () => {
   // queryText.value
@@ -217,6 +226,12 @@ const {
   sizeChange: () => getList(),
   currentChange: () => getList(),
 });
+
+const apiUrl = computed(() => {
+  return `${import.meta.env.VITE_BASE_URL}/share/shortLink/list?_id=${
+    accountInfo._id
+  }&pageSize=100`;
+});
 </script>
 
 <style lang="scss" scoped>
@@ -229,5 +244,12 @@ const {
   display: flex;
   justify-content: flex-end;
   padding-top: 20px;
+}
+
+.tips {
+  margin-bottom: 20px;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 0 5px #eee;
 }
 </style>

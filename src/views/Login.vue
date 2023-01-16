@@ -1,4 +1,5 @@
 <template>
+  <div class="tips">游客体验账号: 用户名 admin, 密码 admin</div>
   <div class="login-view">
     <el-form ref="formRef" :model="form" label-width="120px">
       <el-form-item label="用户名" placeholder="请输入用户名">
@@ -26,8 +27,8 @@ const { accountInfo } = useGlobalStore();
 
 const router = useRouter();
 const form = reactive({
-  name: "",
-  password: "",
+  name: "admin",
+  password: "admin",
 });
 
 const formRef = ref();
@@ -70,5 +71,9 @@ export default {
     margin-top: 80px;
     max-width: 500px;
   }
+}
+.tips {
+  width: 100%;
+  text-align: center;
 }
 </style>
